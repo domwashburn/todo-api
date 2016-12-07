@@ -41,9 +41,21 @@ app.post('/todos', (req, res) => {
 	body.id = todoNextId++;
 	// push the post body to the todos array
 	todos.push(body);
-	console.log('body.description', body.description);
 	res.json(body);
 });
+
+// DELETE /todos/:id
+app.delete('/todos/:id', (req, res) => {
+	var todoID = parseInt(req.params.id, 10);
+	var matchedTodo = _.findWhere(todos, {id: todoID});
+	if(matchedTodo) {
+		console.log(matchedTodo)
+		todos = _.without(todos, matchedTodo);
+		res.json(matchedTodo)
+	} else {
+		res.status(404).json({"error": `couldn't find a to do with the ID of ${todoID}`});
+	}
+})
 
 app.listen( PORT, () => {
 	console.log('Todo API running. Listening on port ' + PORT);
