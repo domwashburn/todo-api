@@ -37,12 +37,17 @@ app.get('/todos', (req, res) => {
 // GET /todos/:id -- get a specific todo by id.
 app.get('/todos/:id', (req, res) => {
 	var todoID = parseInt(req.params.id, 10);
-	var matchedTodo = _.findWhere(todos, {id: todoID});
-	if(matchedTodo) {
-		res.json(matchedTodo);
-	} else {
-		res.status(404).send(`oops! can't find a todo with the id of ${todoID}`);
-	}
+	db.todo.findById(todoID)
+		.then( todo => {
+			if (!!todo) {
+				res.json(todo.toJSON());
+			} else {
+				res.status(404).send();
+			}
+		})
+		.catch( e => {
+			res.status(500).send();
+		});
 });
 // POST /todos
 app.post('/todos', (req, res) => {
@@ -54,18 +59,7 @@ app.post('/todos', (req, res) => {
 		})
 		.catch( e => {
 			res.status(400).json(e);
-		})
-
-	// check body
-	// if (!_.isString(body.description) || !_.isBoolean(body.completed) || body.description.trim().length === 0) {
-	// 	return res.status(400).send()
-	// }
-	// body.description = body.description.trim();
-	// // add an ID to the request body and increment the value
-	// body.id = todoNextId++;
-	// // push the post body to the todos array
-	// todos.push(body);
-	// res.json(body);
+		});
 });
 
 // DELETE /todos/:id
