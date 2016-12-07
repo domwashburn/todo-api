@@ -5,7 +5,6 @@ var db = require('./db');
 var app = express();
 var PORT = process.env.PORT || 3000;
 var todos = [];
-// var todoNextId = 1;
 
 app.use(bodyParser.json());
 
@@ -106,4 +105,4 @@ db.sequelize.sync()
 		app.listen( PORT, () => {
 			console.log('Todo API running. Listening on port ' + PORT);
 		});
-	})
+	});
