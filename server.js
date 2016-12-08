@@ -111,7 +111,18 @@ app.put('/todos/:id', (req, res) => {
 	}, () => {
 		res.status(500).send();
 	})
-})
+});
+
+app.post('/users', (req, res) => {
+	var body = _.pick(req.body, 'email', 'password');
+	db.user.create(body)
+		.then( user => {
+			res.json(user.toJSON());
+		})
+		.catch( e => {
+			res.status(400).json(e);
+		});
+});
 
 db.sequelize.sync()
 	.then(() => {
