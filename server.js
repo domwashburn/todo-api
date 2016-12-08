@@ -1,4 +1,5 @@
 var express = require('express');
+var bcrypt = require('bcrypt');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
 var db = require('./db');
@@ -124,7 +125,17 @@ app.post('/users', (req, res) => {
 		});
 });
 
-db.sequelize.sync()
+app.post('/users/login', (req, res) => {
+	var body = _.pick(req.body, 'email', 'password');
+	db.user.authenticate(body)
+		.then( user => {
+			res.json(user.toPublicJSON());
+		}, () => {
+			res.status(401).send();
+		});
+});
+
+db.sequelize.sync({force: true})
 	.then(() => {
 		app.listen( PORT, () => {
 			console.log('Todo API running. Listening on port ' + PORT);
